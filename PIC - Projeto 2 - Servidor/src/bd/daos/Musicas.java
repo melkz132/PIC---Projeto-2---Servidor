@@ -163,11 +163,11 @@ public class Musicas {
 		return resultado;
 	}
 
-	public static ListaDeMusicas getMusicasTitulo(String titulo) throws Exception {
+	public static ListaDeMusicas<Musica> getMusicasTitulo(String titulo) throws Exception {
 
 		MeuResultSet resultado = null;
 		Musica musica = null;
-		ListaDeMusicas listademusicas = null;
+		ListaDeMusicas<Musica> listademusicas = new ListaDeMusicas<Musica>();
 
 		try {
 			String sql;
@@ -184,7 +184,7 @@ public class Musicas {
 				throw new Exception();
 			}
 
-			while (this.resultado.next()) {
+			while (resultado.next()) {
 				musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
 						resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
 				listademusicas.insereItem(musica);
@@ -194,16 +194,16 @@ public class Musicas {
 			throw new Exception("Erro ao recuperar musicas");
 		}
 
-		BD.comando.close();
+		BDSQLServer.COMANDO.close();
 
 		return listademusicas;
 	}
 
-	public static ListaDeMusicas getMusicasTitulo(String estilo) throws Exception {
+	public static ListaDeMusicas<Musica> getMusicasEstilo(String estilo) throws Exception {
 
 		MeuResultSet resultado = null;
 		Musica musica = null;
-		ListaDeMusicas listademusicas = null;
+		ListaDeMusicas<Musica> listademusicas = new ListaDeMusicas<Musica>();
 
 		try {
 			String sql;
@@ -220,7 +220,7 @@ public class Musicas {
 				throw new Exception();
 			}
 
-			while (this.resultado.next()) {
+			while (resultado.next()) {
 				musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
 						resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
 				listademusicas.insereItem(musica);
@@ -230,16 +230,16 @@ public class Musicas {
 			throw new Exception("Erro ao recuperar musicas");
 		}
 
-		BD.comando.close();
+		BDSQLServer.COMANDO.close();
 
 		return listademusicas;
 	}
 
-	public static ListaDeMusicas getMusicasCantor(String cantor) throws Exception {
+	public static ListaDeMusicas<Musica> getMusicasCantor(String cantor) throws Exception {
 
 		MeuResultSet resultado = null;
 		Musica musica = null;
-		ListaDeMusicas listademusicas = null;
+		ListaDeMusicas<Musica> listademusicas = new ListaDeMusicas<Musica>();
 
 		try {
 			String sql;
@@ -256,7 +256,7 @@ public class Musicas {
 				throw new Exception();
 			}
 
-			while (this.resultado.next()) {
+			while (resultado.next()) {
 				musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
 						resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
 				listademusicas.insereItem(musica);
@@ -266,7 +266,7 @@ public class Musicas {
 			throw new Exception("Erro ao recuperar musicas");
 		}
 
-		BD.comando.close();
+		BDSQLServer.COMANDO.close();
 
 		return listademusicas;
 	}
