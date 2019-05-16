@@ -4,8 +4,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import bd.dbos.ListaDeMusicas;
+import bd.dbos.Musica;
+
 public class SupervisoraDeConexao extends Thread {
 	private String nick;
+	private String criterio;
+	private String info;
 	private Parceiro usuario;
 	private Socket conexao;
 	private HashMap<String, Parceiro> usuarios;
@@ -148,25 +153,25 @@ public class SupervisoraDeConexao extends Thread {
 					return;
 				}
 
-				ListaDeMusicas listademusicas = null;
+				ListaDeMusicas<Musica> listademusicas = new ListaDeMusicas<Musica>();
 
 				if (this.criterio.toLowerCase().equals("titulo"))
-					listademusicas = bd.Musicas.getMusicasTitulo(this.info);
+					listademusicas = bd.daos.Musicas.getMusicasTitulo(this.info);
 
 				if (this.criterio.toLowerCase().equals("cantor"))
-					listademusicas = bd.Musicas.getMusicasCantor(this.info);
+					listademusicas = bd.daos.Musicas.getMusicasCantor(this.info);
 
 				if (this.criterio.toLowerCase().equals("estilo"))
-					listademusicas = bd.Musicas.getMusicasCantor(this.info);
+					listademusicas = bd.daos.Musicas.getMusicasCantor(this.info);
 
 				if (listademusicas == null)
 					this.usuario.receba(new Comunicado("FIC"));
 
-				while (!listademusicas == null) {
+				while (!(listademusicas == null)) {
 					Musica musica = null;
-					musica = listademusicas.getItem;
-					Comunicado comunicadolista = new Comunicado("MUS", musica.getTitle, musica.getSinger,
-							musica.getStyle, musica.getPrice, musica.getDuration);
+					musica = listademusicas.getItem();
+					Comunicado comunicadolista = new Comunicado("MUS", musica.getTitle(), musica.getSinger(),
+							musica.getStyle(), musica.getPrice(), musica.getDuration());
 					this.usuario.receba(comunicadolista);
 					listademusicas.removeItem();
 				}
