@@ -1,57 +1,41 @@
 package programa;
 
-
 import java.net.*;
 import java.util.*;
 
-public class AceitadoraDeConexao extends Thread
-{
-    private ServerSocket             pedido;
-    private HashMap<String,Parceiro> usuarios;
+public class AceitadoraDeConexao extends Thread {
+	private ServerSocket pedido;
+	private HashMap<String, Parceiro> usuarios;
 
-    public AceitadoraDeConexao
-    (int porta, HashMap<String,Parceiro> usuarios)
-    throws Exception
-    {
-        if (usuarios==null)
-            throw new Exception ("Usuarios ausentes");
+	public AceitadoraDeConexao(int porta, HashMap<String, Parceiro> usuarios) throws Exception {
+		if (usuarios == null)
+			throw new Exception("Usuarios ausentes");
 
-        this.usuarios = usuarios;
+		this.usuarios = usuarios;
 
-        try
-        {
-            this.pedido =
-            new ServerSocket (porta);
-        }
-        catch (Exception erro)
-        {
-            throw new Exception ("Porta invalida");
-        }
-    }
+		try {
+			this.pedido = new ServerSocket(porta);
+		} catch (Exception erro) {
+			throw new Exception("Porta invalida");
+		}
+	}
 
-    public void run ()
-    {
-        for(;;)
-        {
-            Socket conexao=null;
-            try
-            {
-                conexao = this.pedido.accept();
-            }
-            catch (Exception erro)
-            {
-                continue;
-            }
+	public void run() {
+		for (;;) {
+			Socket conexao = null;
+			try {
+				conexao = this.pedido.accept();
+				System.out.println("> Conectado: " + conexao + "\n> ");
+			} catch (Exception erro) {
+				continue;
+			}
 
-            SupervisoraDeConexao supervisoraDeConexao=null;
-            try
-            {
-                supervisoraDeConexao =
-                new SupervisoraDeConexao (conexao, usuarios);
-            }
-            catch (Exception erro)
-            {} // sei que passei parametros corretos para o construtor
-            supervisoraDeConexao.start();
-        }
-    }
+			SupervisoraDeConexao supervisoraDeConexao = null;
+			try {
+				supervisoraDeConexao = new SupervisoraDeConexao(conexao, usuarios);
+			} catch (Exception erro) {
+			} // sei que passei parametros corretos para o construtor
+			supervisoraDeConexao.start();
+		}
+	}
 }

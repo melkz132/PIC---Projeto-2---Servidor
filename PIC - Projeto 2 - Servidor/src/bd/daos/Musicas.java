@@ -5,194 +5,269 @@ import bd.*;
 import bd.core.*;
 import bd.dbos.*;
 
-public class Musicas
-{
-    public static boolean cadastrado (int codigo) throws Exception
-    {
-        boolean retorno = false;
+public class Musicas {
+	public static boolean cadastrado(int codigo) throws Exception {
+		boolean retorno = false;
 
-        try
-        {
-            String sql;
+		try {
+			String sql;
 
-            sql = "SELECT * " +
-                  "FROM musicaS " +
-                  "WHERE CODIGO = ?";
+			sql = "SELECT * " + "FROM musicaS " + "WHERE CODIGO = ?";
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            BDSQLServer.COMANDO.setInt (1, codigo);
+			BDSQLServer.COMANDO.setInt(1, codigo);
 
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
+			MeuResultSet resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
 
-            retorno = resultado.first(); // pode-se usar resultado.last() ou resultado.next() ou resultado.previous() ou resultado.absotule(numeroDaLinha)
+			retorno = resultado.first(); // pode-se usar resultado.last() ou
+											// resultado.next() ou
+											// resultado.previous() ou
+											// resultado.absotule(numeroDaLinha)
 
-            /* // ou, se preferirmos,
+			/*
+			 * // ou, se preferirmos,
+			 * 
+			 * String sql;
+			 * 
+			 * sql = "SELECT COUNT(*) AS QUANTOS " + "FROM musicaS " +
+			 * "WHERE CODIGO = ?";
+			 * 
+			 * BDSQLServer.COMANDO.prepareStatement (sql);
+			 * 
+			 * BDSQLServer.COMANDO.setInt (1, codigo);
+			 * 
+			 * MeuResultSet resultado =
+			 * (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
+			 * 
+			 * resultado.first();
+			 * 
+			 * retorno = resultado.getInt("QUANTOS") != 0;
+			 * 
+			 */
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao procurar musica");
+		}
 
-            String sql;
+		return retorno;
+	}
 
-            sql = "SELECT COUNT(*) AS QUANTOS " +
-                  "FROM musicaS " +
-                  "WHERE CODIGO = ?";
+	public static void incluir(Musica musica) throws Exception {
+		if (musica == null)
+			throw new Exception("musica nao fornecido");
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+		try {
+			String sql;
 
-            BDSQLServer.COMANDO.setInt (1, codigo);
+			sql = "INSERT INTO musicaS " + "(CODIGO,NOME,PRECO) " + "VALUES " + "(?,?,?)";
 
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            resultado.first();
+			BDSQLServer.COMANDO.setInt(1, musica.getCodigo());
+			BDSQLServer.COMANDO.setString(2, musica.getNome());
+			BDSQLServer.COMANDO.setFloat(3, musica.getPreco());
 
-            retorno = resultado.getInt("QUANTOS") != 0;
+			BDSQLServer.COMANDO.executeUpdate();
+			BDSQLServer.COMANDO.commit();
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao inserir musica");
+		}
+	}
 
-            */
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao procurar musica");
-        }
+	public static void excluir(int codigo) throws Exception {
+		if (!cadastrado(codigo))
+			throw new Exception("Nao cadastrado");
 
-        return retorno;
-    }
+		try {
+			String sql;
 
-    public static void incluir (Musica musica) throws Exception
-    {
-        if (musica==null)
-            throw new Exception ("musica nao fornecido");
+			sql = "DELETE FROM musicaS " + "WHERE CODIGO=?";
 
-        try
-        {
-            String sql;
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            sql = "INSERT INTO musicaS " +
-                  "(CODIGO,NOME,PRECO) " +
-                  "VALUES " +
-                  "(?,?,?)";
+			BDSQLServer.COMANDO.setInt(1, codigo);
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+			BDSQLServer.COMANDO.executeUpdate();
+			BDSQLServer.COMANDO.commit();
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao excluir musica");
+		}
+	}
 
-            BDSQLServer.COMANDO.setInt    (1, musica.getCodigo ());
-            BDSQLServer.COMANDO.setString (2, musica.getNome ());
-            BDSQLServer.COMANDO.setFloat  (3, musica.getPreco ());
+	public static void alterar(Musica musica) throws Exception {
+		if (musica == null)
+			throw new Exception("musica nao fornecido");
 
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao inserir musica");
-        }
-    }
+		if (!cadastrado(musica.getId()))
+			throw new Exception("Nao cadastrado");
 
-    public static void excluir (int codigo) throws Exception
-    {
-        if (!cadastrado (codigo))
-            throw new Exception ("Nao cadastrado");
+		try {
+			String sql;
 
-        try
-        {
-            String sql;
+			sql = "UPDATE musicaS " + "SET NOME=? " + "SET PRECO=? " + "WHERE CODIGO = ?";
 
-            sql = "DELETE FROM musicaS " +
-                  "WHERE CODIGO=?";
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+			BDSQLServer.COMANDO.setString(1, musica.getTitle());
+			BDSQLServer.COMANDO.setFloat(2, musica.getPrice());
+			BDSQLServer.COMANDO.setInt(3, musica.getId());
 
-            BDSQLServer.COMANDO.setInt (1, codigo);
+			BDSQLServer.COMANDO.executeUpdate();
+			BDSQLServer.COMANDO.commit();
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao atualizar dados de musica");
+		}
+	}
 
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao excluir musica");
-        }
-    }
+	public static Musica getMusica(int codigo) throws Exception {
+		Musica musica = null;
 
-    public static void alterar (Musica musica) throws Exception
-    {
-        if (musica==null)
-            throw new Exception ("musica nao fornecido");
+		try {
+			String sql;
 
-        if (!cadastrado (musica.getId()))
-            throw new Exception ("Nao cadastrado");
+			sql = "SELECT * " + "FROM musicaS " + "WHERE CODIGO = ?";
 
-        try
-        {
-            String sql;
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            sql = "UPDATE musicaS " +
-                  "SET NOME=? " +
-                  "SET PRECO=? " +
-                  "WHERE CODIGO = ?";
+			BDSQLServer.COMANDO.setInt(1, codigo);
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+			MeuResultSet resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
 
-            BDSQLServer.COMANDO.setString (1, musica.getTitle ());
-            BDSQLServer.COMANDO.setFloat  (2, musica.getPrice ());
-            BDSQLServer.COMANDO.setInt    (3, musica.getId ());
+			if (!resultado.first())
+				throw new Exception("Nao cadastrado");
 
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao atualizar dados de musica");
-        }
-    }
+			musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
+					resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao procurar musica");
+		}
 
-    public static Musica getmusica (int codigo) throws Exception
-    {
-        Musica musica = null;
+		return musica;
+	}
 
-        try
-        {
-            String sql;
+	public static MeuResultSet getmusicas() throws Exception {
+		MeuResultSet resultado = null;
 
-            sql = "SELECT * " +
-                  "FROM musicaS " +
-                  "WHERE CODIGO = ?";
+		try {
+			String sql;
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+			sql = "SELECT * " + "FROM musicaS";
 
-            BDSQLServer.COMANDO.setInt (1, codigo);
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
+			resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao recuperar musicas");
+		}
 
-            if (!resultado.first())
-                throw new Exception ("Nao cadastrado");
+		return resultado;
+	}
 
-            musica = new Musica (resultado.getInt   ("CODIGO"),
-                               resultado.getString("NOME"),
-                               resultado.getFloat ("PRECO"));
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao procurar musica");
-        }
+	public static ListaDeMusicas getMusicasTitulo(String titulo) throws Exception {
 
-        return musica;
-    }
+		MeuResultSet resultado = null;
+		Musica musica = null;
+		ListaDeMusicas listademusicas = null;
 
-    public static MeuResultSet getmusicas () throws Exception
-    {
-        MeuResultSet resultado = null;
+		try {
+			String sql;
 
-        try
-        {
-            String sql;
+			sql = "SELECT * FROM musicaS WHERE TITULO LIKE %?%";
 
-            sql = "SELECT * " +
-                  "FROM musicaS";
+			BDSQLServer.COMANDO.prepareStatement(sql);
 
-            BDSQLServer.COMANDO.prepareStatement (sql);
+			BDSQLServer.COMANDO.setString(1, titulo);
 
-            resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao recuperar musicas");
-        }
+			resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
 
-        return resultado;
-    }
+			if (!resultado.first()) {
+				throw new Exception();
+			}
+
+			while (this.resultado.next()) {
+				musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
+						resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
+				listademusicas.insereItem(musica);
+			}
+
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao recuperar musicas");
+		}
+
+		BD.comando.close();
+
+		return listademusicas;
+	}
+
+	public static ListaDeMusicas getMusicasTitulo(String estilo) throws Exception {
+
+		MeuResultSet resultado = null;
+		Musica musica = null;
+		ListaDeMusicas listademusicas = null;
+
+		try {
+			String sql;
+
+			sql = "SELECT * FROM musicaS WHERE ESTILO LIKE %?%";
+
+			BDSQLServer.COMANDO.prepareStatement(sql);
+
+			BDSQLServer.COMANDO.setString(1, estilo);
+
+			resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
+
+			if (!resultado.first()) {
+				throw new Exception();
+			}
+
+			while (this.resultado.next()) {
+				musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
+						resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
+				listademusicas.insereItem(musica);
+			}
+
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao recuperar musicas");
+		}
+
+		BD.comando.close();
+
+		return listademusicas;
+	}
+
+	public static ListaDeMusicas getMusicasCantor(String cantor) throws Exception {
+
+		MeuResultSet resultado = null;
+		Musica musica = null;
+		ListaDeMusicas listademusicas = null;
+
+		try {
+			String sql;
+
+			sql = "SELECT * FROM musicaS WHERE CANTOR LIKE %?%";
+
+			BDSQLServer.COMANDO.prepareStatement(sql);
+
+			BDSQLServer.COMANDO.setString(1, cantor);
+
+			resultado = (MeuResultSet) BDSQLServer.COMANDO.executeQuery();
+
+			if (!resultado.first()) {
+				throw new Exception();
+			}
+
+			while (this.resultado.next()) {
+				musica = new Musica(resultado.getString("TITULO"), resultado.getString("CANTOR"),
+						resultado.getString("ESTILO"), resultado.getFloat("PRECO"), resultado.getFloat("DURACAO"));
+				listademusicas.insereItem(musica);
+			}
+
+		} catch (SQLException erro) {
+			throw new Exception("Erro ao recuperar musicas");
+		}
+
+		BD.comando.close();
+
+		return listademusicas;
+	}
 }
